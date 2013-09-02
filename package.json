@@ -14,13 +14,15 @@
     "minecraft-skin": "0.1.2",
     "voxel-player": "0.1.0",
     "extend": "1.1.3",
-	"voxel": "0.3.1"
+    "voxel": "0.3.1",
+    "painterly-textures": "0.0.3",
+    "javascript-editor": "git://github.com/kumavis/javascript-editor.git"
   },
   "engines": {
     "node": "0.8.x"
   },
   "scripts": {
-    "start": "cd www && beefy demo.js:bundle.js"
+    "start": "beefy ./www/demo.js:bundle.js --cwd `pwd`"
   },
   "devDependencies": {
     "browserify": "~2.10.2",

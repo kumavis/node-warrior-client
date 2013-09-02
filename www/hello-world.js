@@ -1,7 +1,14 @@
-var createClient = require('../')
-var highlight = require('voxel-highlight')
+// external deps
 var extend = require('extend')
+
+// voxel deps
+var toolbar = require('toolbar')
+var highlight = require('voxel-highlight')
 var voxelPlayer = require('voxel-player')
+
+// internal deps
+var createClient = require('../')
+
 var game
 
 module.exports = function(opts, setup) {
@@ -16,12 +23,13 @@ module.exports = function(opts, setup) {
     game = client.game
     game.appendTo(container)
     if (game.notCapable()) return game
+
     var createPlayer = voxelPlayer(game)
 
     // create the player from a minecraft skin file and tell the
     // game to use it as the main player
-    var avatar = createPlayer('player.png')
-    window.avatar = avatar
+    var avatar = createPlayer('www/player.png')
+    game.avatar = avatar
     avatar.possess()
     var settings = game.settings.avatarInitialPosition
     avatar.position.set(settings[0],settings[1],settings[2])
@@ -45,14 +53,18 @@ function defaultSetup(game, avatar, client) {
     if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
   })
 
-  // block interaction stuff, uses highlight data
-  var currentMaterial = 1
+  // set current material from toolbox
+  avatar.currentMaterial = 1
+  toolbar({el: '#tools'}).on('select',function(item){
+    avatar.currentMaterial = Number(item)
+  })
 
+  // block interaction stuff, uses highlight data
   game.on('fire', function (target, state) {
     var position = blockPosPlace
     if (position) {
-      game.createBlock(position, currentMaterial)
-      client.emitter.emit('set', position, currentMaterial)
+      game.createBlock(position, avatar.currentMaterial)
+      client.emitter.emit('set', position, avatar.currentMaterial)
     } else {
       position = blockPosErase
       if (position) {

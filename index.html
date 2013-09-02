@@ -35,11 +35,20 @@
       #cmdbox { position: absolute; bottom: 0; }
       #chat input { box-shadow: none; padding: 0px 10px; margin: 0; background: none; border: none; border-radius: 0; }
       input, input:focus { outline: none }
+      #jseditor{
+        position: absolute;
+        left: 60%;
+        width: 100%;
+      }
+      #jseditor .CodeMirror {
+        font-size: 12px;
+        background-color: rgba(100,100,100,0.5);
+      }
     </style>
-    <link href="ratchet.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="www/ratchet.css" media="screen" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <img class="logo" src="logo-white.png">
+    <img class="logo" src="www/logo-white.png">
     <div id="container"></div>
     <div id="crosshair"></div>
     <div id="chat">
@@ -48,27 +57,33 @@
         <input type="text" id="cmd" placeholder="Press <enter> to chat" /><br/>
       </div>
     </div>
+    <div id="bingbong"></div>
+    <div id="jseditor"></div>
     <nav class="bar-tab" id="tools" >
       <ul class="tab-inner">
         <li class="tab-item active">
-          <img class="tab-icon" src="/textures/grass.png">
+          <img class="tab-icon" src="/node_modules/painterly-textures/textures/grass.png">
           <div class="tab-label" data-id="1">grass</div>
         </li>
         <li class="tab-item">
-          <img class="tab-icon" src="/textures/brick.png">
+          <img class="tab-icon" src="/node_modules/painterly-textures/textures/brick.png">
           <div class="tab-label" data-id="2">brick</div>
         </li>
         <li class="tab-item">
-          <img class="tab-icon" src="/textures/dirt.png">
+          <img class="tab-icon" src="/node_modules/painterly-textures/textures/dirt.png">
           <div class="tab-label" data-id="3">dirt</div>
         </li>
         <li class="tab-item">
-          <img class="tab-icon" src="/textures/obsidian.png">
+          <img class="tab-icon" src="/node_modules/painterly-textures/textures/obsidian.png">
           <div class="tab-label" data-id="4">obsidian</div>
         </li>
         <li class="tab-item">
-          <img class="tab-icon" src="/textures/snow.png">
+          <img class="tab-icon" src="/node_modules/painterly-textures/textures/whitewool.png">
           <div class="tab-label" data-id="5">snow</div>
+        </li>
+        <li class="tab-item">
+          <img class="tab-icon" src="/node_modules/painterly-textures/textures/plank.png">
+          <div class="tab-label" data-id="6">code block</div>
         </li>
       </ul>
     </nav>
