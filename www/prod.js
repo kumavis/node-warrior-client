@@ -1,1 +1,1 @@
-require('./prod.js')({server: "ws://voxel.kumavis.me:8000/"})
+require('./default.js')({server: "ws://voxel.kumavis.me:8000/"})
