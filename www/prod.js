@@ -1,0 +1,1 @@
+require('./prod.js')({server: "ws://voxel.kumavis.me:8000/"})
