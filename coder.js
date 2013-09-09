@@ -1,21 +1,27 @@
 module.exports = function(name, emitter, jseditor) {
+
+  
+  // return api object
+  return {
+    runCode: runCode,
+  }
   
   // Handle executing code
-  var el = document.getElementById('jseditor');
-  el.addEventListener('keyup', function(e) {
-    if (e.keyCode == 192) {
-      console.log('emit code.')
-      var code = jseditor.getValue()
-      // emitter.emit('code', {user: name, code: code})
-      runCode({user: name, code: code})
-    }
-    
-  });
+  function runCode(environment) {
+    environment = environment || {}
 
-  emitter.on('code', runCode)
+    // bring environment keys into scope
+    var preamble = Object.keys(environment)
+                         .map(function(key){ return 'var '+key+' = environment.'+key+';' })
+                         .join('\n')
+                         + "\n\n//======= end of preamble ========\n\n"
 
-  function runCode(execution) {
-    console.log(execution.user+' fires code.')
-    eval(execution.code)
+    var userCode = jseditor.getValue()
+    console.log('firing code:\n',userCode)
+
+    var code = preamble + userCode
+
+    eval(code)
   }
+
 }

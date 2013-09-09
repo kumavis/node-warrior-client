@@ -5,13 +5,10 @@ var duplexEmitter = require('duplex-emitter')
 var randomName = require('./randomname')
 var crunch = require('voxel-crunch')
 var emitChat = require('./chat')
-var setupCoder = require('./coder')
 var highlight = require('voxel-highlight')
 var skin = require('minecraft-skin')
 var player = require('voxel-player')
 var texturePath = "/node_modules/painterly-textures/textures/"
-var createJsEditor = require('javascript-editor')
-var jsEditor
 
 module.exports = Client
 
@@ -46,26 +43,28 @@ Client.prototype.bindEvents = function(socket, game) {
   var emitter = this.emitter
   this.connected = true
 
+  // Get ID from server
   emitter.on('id', function(id) {
     console.log('got id', id)
     self.playerID = id
     if (game != null) {
-  	  self.game = game
-  	  console.log("Sending local settings to the server.")
-  	  emitter.emit('clientSettings', self.game.settings)
+      self.game = game
+      console.log("Sending local settings to the server.")
+      emitter.emit('clientSettings', self.game.settings)
     } else {
-  	  emitter.emit('clientSettings', null)
+      emitter.emit('clientSettings', null)
     }
   })
   
+  // Get settings from server
   emitter.on('settings', function(settings) {
     settings.texturePath = texturePath
     settings.generateChunks = false
     //deserialise the voxel.generator function.
     if (settings.generatorToString != null) {
-    	settings.generate = eval("(" + settings.generatorToString + ")")
+      settings.generate = eval("(" + settings.generatorToString + ")")
     }
-    self.game = self.createGame(settings, game)	
+    self.game = self.createGame(settings, game)  
     emitter.emit('created')
     emitter.on('chunk', function(encoded, chunk) {
       var voxels = crunch.decode(encoded, chunk.length)
@@ -74,7 +73,7 @@ Client.prototype.bindEvents = function(socket, game) {
     })
   })
 
-  // fires when server sends us voxel edits
+  // Get voxel updates from Server
   emitter.on('set', function(pos, val) {
     self.game.setBlock(pos, val)
   })
@@ -87,6 +86,7 @@ Client.prototype.createGame = function(settings, game) {
   self.game = engine(settings)
   self.game.settings = settings
   window.game = self.game
+  
   function sendState() {
     if (!self.connected) return
     var player = self.game.controls.target()
@@ -116,15 +116,6 @@ Client.prototype.createGame = function(settings, game) {
   
   // setup chat
   emitChat(name, emitter)
-
-  // inject javascript editor
-  jsEditor = createJsEditor({
-    container: document.getElementById('jseditor'),
-    injectStyles: true,
-  })
-
-  // setup coderr
-  setupCoder(name, emitter, jsEditor)
 
   // setTimeout is because three.js seems to throw errors if you add stuff too soon
   setTimeout(function() {

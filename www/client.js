@@ -1,0 +1,1 @@
+require('./default.js')({server: "ws://localhost:8080/"})

@@ -1,5 +1,6 @@
 // external deps
 var extend = require('extend')
+var createJsEditor = require('javascript-editor')
 
 // voxel deps
 var toolbar = require('toolbar')
@@ -8,8 +9,19 @@ var voxelPlayer = require('voxel-player')
 
 // internal deps
 var createClient = require('../')
+var setupCoder = require('../coder')
 
 var game
+  , jsEditor
+  , coder
+
+
+// player tools enum
+var playerTools = {
+  blocks: {},
+  beam: {},
+  jetpack: {},
+}
 
 module.exports = function(opts, setup) {
   setup = setup || defaultSetup
@@ -36,6 +48,20 @@ module.exports = function(opts, setup) {
     setup(game, avatar, client)
   })
 
+  // inject javascript editor
+  var jsEditorElem = document.getElementById('jseditor')
+  jsEditor = createJsEditor({
+    container: jsEditorElem,
+    injectStyles: true,
+  })
+  // squeltch keypress events bubbling from jseditor
+  jsEditorElem.addEventListener('keypress',function(event){ event.stopPropagation() })
+  jsEditorElem.addEventListener('keydown',function(event){ event.stopPropagation() })
+  jsEditorElem.addEventListener('keyup',function(event){ event.stopPropagation() })
+
+  // setup coder
+  coder = setupCoder(name, client.emitter, jsEditor, {})
+
   return game
 }
 
@@ -53,25 +79,57 @@ function defaultSetup(game, avatar, client) {
     if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
   })
 
-  // set current material from toolbox
+  // setup tool selection
+  avatar.currentTool = playerTools.blocks
+  toolbar({
+    el: '#tools',
+    toolbarKeys: ['comma','period','forwardslash']
+  }).on('select',function(item){
+    avatar.currentTool = playerTools[item]
+  })
+
+  // setup block material selection
   avatar.currentMaterial = 1
-  toolbar({el: '#tools'}).on('select',function(item){
+  toolbar({el: '#blocks'}).on('select',function(item){
     avatar.currentMaterial = Number(item)
   })
 
+  // game click event
   // block interaction stuff, uses highlight data
   game.on('fire', function (target, state) {
-    var position = blockPosPlace
-    if (position) {
-      game.createBlock(position, avatar.currentMaterial)
-      client.emitter.emit('set', position, avatar.currentMaterial)
-    } else {
-      position = blockPosErase
+
+    // blocks
+    if (avatar.currentTool === playerTools.blocks) {
+      var position = blockPosPlace
       if (position) {
-        game.setBlock(position, 0)
-        console.log("Erasing point at " + JSON.stringify(position))
-        client.emitter.emit('set', position, 0)
+        setBlock(position, avatar.currentMaterial)
+      } else {
+        position = blockPosErase
+        if (position) {
+          console.log("Erasing point at " + JSON.stringify(position))
+          setBlock(position, 0)
+        }
       }
+    // beam
+    } else if (avatar.currentTool === playerTools.beam) {
+      coder.runCode({
+        hitBlock: blockPosErase,
+        neighborBlock: blockPosPlace,
+        setBlock: setBlock,
+      })
+    // jetpack
+    } else if (avatar.currentTool === playerTools.jetpack) {
+
     }
+
+    
   })
+
+  function setBlock( position, value ) {
+    // set local
+    game.setBlock(position, value)
+    // set remote
+    client.emitter.emit('set', position, value)
+  }
+
 }
