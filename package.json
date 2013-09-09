@@ -22,7 +22,7 @@
     "node": "0.8.x"
   },
   "scripts": {
-    "start": "beefy ./www/client.js:bundle.js --cwd `pwd`"
+    "start": "beefy ./www/client.js:bundle.js --cwd `pwd` --port 8002"
   },
   "devDependencies": {
     "browserify": "~2.10.2",

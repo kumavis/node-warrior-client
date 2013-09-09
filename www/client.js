@@ -1,1 +1,1 @@
-require('./default.js')({server: "ws://localhost:8080/"})
+require('./default.js')({server: "ws://localhost:8000/"})
