@@ -67,7 +67,7 @@ Client.prototype.bindEvents = function(connection) {
       var lastIndex = Math.max.apply(null,Object.keys(encoded).map(Number))
       encoded.length = lastIndex+1
     }
-    var voxels = crunch.decode(encoded, chunk.length)
+    var voxels = crunch.decode(encoded, chunk)
     chunk.voxels = voxels
     self.game.showChunk(chunk)
   })
