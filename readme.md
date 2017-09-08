@@ -1,5 +1,7 @@
 # voxel-client
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kumavis/voxel-client.svg)](https://greenkeeper.io/)
+
 Enable an app based on voxel-engine to be a client for [voxel-server](https://github.com/kumavis/voxel-server)
 
 
